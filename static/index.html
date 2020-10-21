@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    //-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron mt-3">
+        <h1>Face Mask Mesh</h1>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi ullam placeat rem. Quia, soluta omnis est tempora voluptates ducimus eligendi, necessitatibus itaque vitae aperiam eos. Nostrum consectetur odio dolorem eligendi.</p>
+        GitHub Repo : <a href="https://github.com/woomurf/FaceMaskDetection">https://aihub.gitlab.com</a>
+        <br />
+        Open API : <a href="#">On Ainize</a>
+        <br />
+        <br />
+        <h4>Note</h4>
+        <ul>
+          <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta cumque quas nesciunt veritatis illum ullam vitae voluptatum error, quis tenetur explicabo ea, autem ratione. Inventore reprehenderit tempore necessitatibus ad debitis.</li>
+          <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam at voluptatum doloribus fugiat libero totam optio dolor sequi expedita. Dignissimos ratione illo suscipit molestiae quam. Esse vero voluptatem dolores nisi.</li>
+          <li>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officia magnam perferendis sit, corrupti iure officiis animi iusto nulla distinctio fugiat quam minima quibusdam libero beatae! Hic doloremque voluptas porro autem.</li>
+        </ul>
+        <hr class="solid">
+        <h4>Example</h4>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis ipsa, saepe delectus reprehenderit sit non distinctio deleniti omnis recusandae? Consequatur eaque fugit iure a? Aut amet laboriosam a sunt quisquam!
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam necessitatibus soluta rerum quod, ipsam dignissimos corporis maxime ut, enim quae, vero ipsum dolores sunt nulla ab maiores debitis cumque dolorum.
+        </p>
+      </div>
+      <div class="row row-cols-1 row-cols-md-2">
+        <div class="col mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Origin</h5>
+              <img src="images/3.jpg" class="card-img-top" alt="...">
+            </div>
+          </div>
+        </div>
+        <div class="col mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Processed</h5>
+              <img src="images/4.jpg" class="card-img-top" alt="...">
+            </div>
+          </div>
+        </div>
+      </div> <!-- card list //-->
+      <hr class="solid">
+      <h4>Let's test</h4>
+      
+      <div class="form-group">
+        <div class="row row-cols-1 row-cols-md-2">
+          <div class="col">
+            <input type="file" id="input_image">
+            <button id="btn_image" class="btn btn-primary" type="button">Process
+            </button>
+          </div>
+          <div class="col">
+            <div id="spinner" class="spinner-border invisible" role="status">
+              <span id="statusBox" class="sr-only"></span>
+            </div>
+          </div>     
+        </div>
+      </div>
+      <div class="row row-cols-1 row-cols-md-2">
+        <div class="col">
+          <div class="card">
+            <img src="" id="preview_image" class="card-img-top invisible">
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <img src="" id="result_image" class="card-img-top invisible">          
+          </div>
+        </div>
+      </div> <!-- card list //-->
+      
+    </div>
+  </div>
+  <script>
+    window.location.origin = "localhost";
+    const input_box = document.getElementById("input_image");
+    const preview_image = document.getElementById("preview_image");
+    const result_image = document.getElementById("result_image");
+    const spinner = document.getElementById("spinner");
+    const btn_image = document.getElementById("btn_image");
+
+    input_box.addEventListener("change", () => {
+      if (input_box.files && input_box.files[0]) {
+        let reader = new FileReader();
+        reader.readAsDataURL(input_box.files[0]);
+        reader.onload = () => {
+          preview_image.src = reader.result;
+          preview_image.classList.remove('invisible');
+        }
+      }
+    });
+
+    btn_image.addEventListener("click", () => {
+      console.log("clicked");
+      const inputImage = input_box.files[0];
+      if (!inputImage) {
+        alert("Select a file!!!");
+      }
+
+      btn_image.classList.add("invisible");
+      spinner.classList.remove("invisible");
+      inferenceRequest(inputImage);
+    });
+
+
+    function inferenceRequest(inputImage) {
+      let formData = new FormData();
+      formData.append("image", inputImage);
+     
+      axios.post('/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+        result_image.src = response.data;
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .finally(() => {
+        spinner.classList.add("invisible");
+        btn_image.classList.remove("invisible");
+      });
+    }
+    </script>
+  </body>
+</html>
